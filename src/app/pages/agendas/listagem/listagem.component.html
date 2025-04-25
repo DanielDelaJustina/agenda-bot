@@ -1,0 +1,75 @@
+<div class="container mt-4">
+    <h2 class="mb-4">Agendas do Salão</h2>
+  
+    <!-- Barra de filtros -->
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Filtrar</mat-label>
+          <input matInput (keyup)="aplicarFiltroGeral($event)" placeholder="Qualquer campo">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Filtrar por data</mat-label>
+          <input matInput [matDatepicker]="picker" (dateChange)="filtrarPorData($event)" [formControl]="dataControl">
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+  
+    <!-- Loading spinner -->
+    <mat-spinner *ngIf="isLoading" diameter="50" class="mx-auto my-5"></mat-spinner>
+  
+    <!-- Tabela -->
+    <div class="table-responsive mat-elevation-z8" *ngIf="!isLoading">
+      <table mat-table [dataSource]="dataSource" matSort class="w-100">
+        <!-- Coluna Cliente -->
+        <ng-container matColumnDef="cliente">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Cliente </th>
+          <td mat-cell *matCellDef="let agenda"> {{agenda.cliente}} </td>
+        </ng-container>
+  
+        <!-- Coluna Serviço -->
+        <ng-container matColumnDef="servico">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Serviço </th>
+          <td mat-cell *matCellDef="let agenda"> {{agenda.servico}} </td>
+        </ng-container>
+  
+        <!-- Coluna Data/Hora -->
+        <ng-container matColumnDef="dataHora">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Data/Hora </th>
+          <td mat-cell *matCellDef="let agenda"> 
+            {{agenda.dataHora | date:'dd/MM/yyyy HH:mm'}} 
+          </td>
+        </ng-container>
+  
+        <!-- Coluna Ações -->
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef> Ações </th>
+          <td mat-cell *matCellDef="let agenda">
+            <button mat-icon-button color="primary" (click)="editarAgenda(agenda)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="removerAgenda(agenda)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  
+        <!-- Linha quando não há dados -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" [colSpan]="displayedColumns.length">
+            Nenhum registro encontrado
+          </td>
+        </tr>
+      </table>
+  
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
